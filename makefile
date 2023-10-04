@@ -9,7 +9,7 @@ ModFolder := src/
 GRC := $(shell which grc)
 GRC := $(GRC:%=% )
 
-.PHONY : all clean reset test patch
+.PHONY : all clean reset test diff
 
 all : ; @echo -n
 
@@ -20,7 +20,7 @@ clean : ; rm -rf $(SourceFolder)/
 reset : | clean ; rm -r $(SourceArchive)
 
 # Show `diff` between original and mod (in color, if `grc` is present).
-patch : $(SourceFolder)/ ; @-$(GRC)diff -rN $(SourceFolder)/ $(ModFolder)
+diff : $(SourceFolder)/ ; -@$(GRC)diff -rN $(SourceFolder)/ $(ModFolder)
 
 # Create a patch between original and mod (while silencing the makefile error
 #	raised due to non-zero exit code).
