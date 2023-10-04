@@ -16,4 +16,6 @@ $(SourceArchive) : ; curl -Lo $@ $(SourceArchiveUrl)
 clean : ; rm -rf $(SourceFolder)/
 reset : | clean ; rm -r $(SourceArchive)
 
+patch : $(SourceFolder)/ ; @diff -rN $(SourceFolder)/ $(ModFolder)
+
 %.patch : $(SourceFolder)/ ; diff -rN $(SourceFolder)/ $(ModFolder) > $@
