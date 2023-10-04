@@ -3,7 +3,7 @@ SourceArchiveVersion := 5.0.1
 SourceArchiveUrl := https://github.com/BieremaBoyzProgramming/bbpPairings/archive/refs/tags/v$(SourceArchiveVersion).tar.gz
 SourceArchive := bbpPairings-v$(SourceArchiveVersion).tar.gz
 SourceFolder := bbpPairings-$(SourceArchiveVersion)
-ModFolder := bbpPairings/
+ModFolder := src/
 
 # Output highlighter to use. Defaults to grc, if present.
 GRC := $(shell which grc)
