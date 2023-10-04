@@ -1,13 +1,16 @@
-CloneUrl = https://github.com/BieremaBoyzProgramming/bbpPairings.git
-DownloadUrl = https://github.com/BieremaBoyzProgramming/bbpPairings/archive/refs/tags/v5.0.1.tar.gz
+
+# CloneUrl = https://github.com/BieremaBoyzProgramming/bbpPairings.git
+SourceVersion = 5.0.1
+SourceArchiveUrl = https://github.com/BieremaBoyzProgramming/bbpPairings/archive/refs/tags/v$(SourceVersion).tar.gz
+SourceArchiveName = bbpPairings-v$(SourceVersion).tar.gz
+SourceFolderName = bbpPairings-$(SourceVersion)
 
 .PHONY : all clean reset test
 
-all : bbpPairings/
+all : $(SourceFolderName)/
 
-bbpPairings/ : ; git clone $(CloneUrl)
+$(SourceFolderName)/ : $(SourceArchiveName) ; tar -mxf $<
+$(SourceArchiveName) : ; curl -Lo $@ $(SourceArchiveUrl)
 
-
-
-clean : ;
-reset : | clean ; rm -rf bbpPairings/
+clean : ; rm -rf $(SourceFolderName)/
+reset : | clean ; rm -r $(SourceArchiveName)
