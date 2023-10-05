@@ -7,8 +7,13 @@ CacheDir := cache
 SourceArchiveVersion := 5.0.1
 SourceArchiveUrl := https://github.com/BieremaBoyzProgramming/bbpPairings/archive/refs/tags/v$(SourceArchiveVersion).tar.gz
 SourceArchive := bbpPairings-v$(SourceArchiveVersion).tar.gz
-SourceFolder := bbpPairings-$(SourceArchiveVersion)
-ModFolder := src
+SourceDir := bbpPairings-$(SourceArchiveVersion)
+ModDir := src
+
+Sources := $(shell find $(ModDir) \( -name '*.cpp' -or -name '*.h' \))
+SourcesDeps := $(filter %.cpp,$(Sources))
+SourcesDeps := $(SourcesDeps:%.cpp=%.d)
+SourcesDeps := $(SourcesDeps:$(ModDir)/%=$(OutDir)/dep/%)
 
 # A sample TRF to fetch from Lichess. We need to artificially increase its
 #	XXR (round count), here from 20 to 21, so the pairer doesn't complain.
@@ -34,15 +39,33 @@ DiffPrintFlags := --unidirectional-new-file $(if $(OH),,$(DiffColorFlags) )
 DiffPatch := $(DIFF) $(DiffCommonFlags) $(DiffPatchFlags)
 DiffPrint := $(OH)$(DIFF) $(DiffCommonFlags) $(DiffPrintFlags)
 
+CXX := g++
+CXXFLAGS :=
+
+NonBuildingGoals := clean purge reset dif diff
+filterNonBuildingGoals := $(filter $(NonBuildingGoals),$(MAKECMDGOALS))
+
 .PHONY : all clean purge reset test dif diff
 
 all : $(OutDir)/$(BinName).$(BinExt)
 
-$(OutDir)/$(BinName).$(BinExt) : | $(OutDir)/
-	$(MAKE) -C $(ModFolder)
-	cp $(ModFolder)/bbpPairings.exe $@
+$(SourcesDeps) : $(OutDir)/dep/%.d : $(ModDir)/%.cpp
+	mkdir -p $(dir $@)
+# 	$(eval _Obj = $(<:%.cpp=%.o))
+# 	$(eval _Obj = $(<:$(ModDir)/src/%=$(OutDir)/obj/%))
+# 	$(info $(_Obj))
+# 	$(CXX) $(CXXFLAGS) -MF $@ -MT $@ -MT $(_Obj) -MM $<
+	$(CXX) $(CXXFLAGS) -MF $@ -MT $@ -MM $<
 
-$(OutDir)/$(SourceFolder)/ : $(CacheDir)/$(SourceArchive) ; tar -C $(OutDir) -mxf $<
+ifeq (,$(call filterNonBuildingGoals))
+-include $(SourcesDeps)
+endif
+
+$(OutDir)/$(BinName).$(BinExt) : $(SourcesDeps) | $(OutDir)/
+	$(MAKE) -C $(ModDir)
+	cp $(ModDir)/bbpPairings.exe $@
+
+$(OutDir)/$(SourceDir)/ : $(CacheDir)/$(SourceArchive) ; tar -C $(OutDir) -mxf $<
 $(CacheDir)/$(SourceArchive) : | $(CacheDir)/ ; curl -Lo $@ $(SourceArchiveUrl)
 
 $(CacheDir)/$(SampleTrfId).trf : | build
@@ -51,7 +74,7 @@ $(CacheDir)/$(SampleTrfId).trf : | build
 
 %/ : ; mkdir -p $@
 
-clean : ; $(MAKE) -C $(ModFolder)/ clean
+clean : ; $(MAKE) -C $(ModDir)/ clean
 purge : | clean ; rm -rf $(OutDir)/
 reset : | purge ; rm -rf $(CacheDir)/
 
@@ -66,11 +89,11 @@ endif
 	@echo $(shell [[ "$(_TestOutput)" = "$(SampleTrfExpectedOutput)" ]] && echo "OK" )
 
 # Show `diff` between original and mod (in color, w/ or w/o pager).
-diff : $(OutDir)/$(SourceFolder)/ ; -@$(DiffPrint) $< $(ModFolder)
-dif  : $(OutDir)/$(SourceFolder)/ ; -@$(DiffPrint) $< $(ModFolder) | less -R
+diff : $(OutDir)/$(SourceDir)/ ; -@$(DiffPrint) $< $(ModDir)
+dif  : $(OutDir)/$(SourceDir)/ ; -@$(DiffPrint) $< $(ModDir) | less -R
 
 # Create a patch between original and mod (while silencing the makefile error
 #	raised due to non-zero exit code).
-%.patch : $(OutDir)/$(SourceFolder)/ ; @echo -n $(shell $(DiffPatch) $< $(ModFolder) > $@)
+%.patch : $(OutDir)/$(SourceDir)/ ; @echo -n $(shell $(DiffPatch) $< $(ModDir) > $@)
 
 .DELETE_ON_ERROR :
