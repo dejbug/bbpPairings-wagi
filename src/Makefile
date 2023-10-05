@@ -150,12 +150,13 @@ else
 	endif
 endif
 
+flto_extra_flags = -fuse-linker-plugin -fwhole-program
 ifeq ($(optimize),yes)
 	# I haven't gotten LTO to work with Clang on mingw-w64.
 	ifneq ($(COMP),clang)
-		optional_cxxflags += -flto
+		optional_cxxflags += -flto=auto $(flto_extra_flags)
 	else ifneq ($(target),w64-windows-gnu)
-		optional_cxxflags += -flto
+		optional_cxxflags += -flto=auto $(flto_extra_flags)
 	endif
 endif
 
@@ -418,7 +419,7 @@ clean: clean-tests
 
 $(OBJ)/%.o: $(SRC)/%.cpp
 	mkdir -p $(dir $@)
-	$(CXX) -o $@ $^ -c -I$(SRC) -MMD -MP $(CXXFLAGS)
+	$(CXX) -o $@ $(filter %.cpp,$^) -c -I$(SRC) -MMD -MP -MT $@ -MT $(@:%.o=%.d) $(CXXFLAGS)
 
 $(OBJ)/bbpPairings.exe: $(OBJECTS)
 	$(CXX) -o $@ $(OBJECTS) $(LDFLAGS)
