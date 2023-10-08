@@ -35,6 +35,10 @@ optimize = yes
 static = no
 COMP = gcc
 
+wasi = $(WasiSdk:%=yes)
+relax = yes
+WasmOpt = wasm-opt
+
 optional_cxxflags = \
 	-std=c++20 \
 	-ftabstop=4 \
@@ -134,6 +138,16 @@ ifeq ($(static),yes)
 	endif
 endif
 
+ifneq ($(wasi),yes)
+ifeq ($(static),yes)
+	ifeq ($(target_os),linux)
+		optional_ldflags += -static-libstdc++ -static-libgcc
+	else
+		optional_ldflags += -static
+	endif
+endif
+endif
+
 ifeq ($(profile),yes)
 	optional_cxxflags += -ggdb
 	optional_cxxflags += -O3
@@ -155,6 +169,7 @@ else
 	endif
 endif
 
+ifneq ($(wasi),yes)
 flto_extra_flags = -fuse-linker-plugin -fwhole-program
 ifeq ($(optimize),yes)
 	# I haven't gotten LTO to work with Clang on mingw-w64.
@@ -163,6 +178,7 @@ ifeq ($(optimize),yes)
 	else ifneq ($(target),w64-windows-gnu)
 		optional_cxxflags += -flto=auto $(flto_extra_flags)
 	endif
+endif
 endif
 
 ifneq ($(burstein),yes)
@@ -396,17 +412,39 @@ ifeq ($(COMP),clang)
 	# -Wweak-vtables
 endif
 
+ifeq ($(wasi),yes)
+# 	license_id = linux
+endif
+
+ifeq ($(wasi),yes)
+ifeq ($(COMP),clang)
+# 	CXX = wasi-clang++
+# 	CXX = ../build/wasi-clang++
+	CXX = $(WasiSdk)/bin/clang++ --sysroot $(WasiSdk)/share/wasi-sysroot/
+# else ifeq ($(COMP),gcc)
+# 	CXX = $(OBJ)/wasm32-wasi-g++
+else
+$(warning WASI target unsupported for compiler "$(COMP)")
+endif
+
+ifeq ($(relax),yes)
+	optional_cxxflags += -Wno-deprecated-declarations
+endif
+endif
+
 CXXFLAGS = $(optional_cxxflags)
 CXXFLAGS += --include ../globals.h
 CXXFLAGS += -fno-exceptions
-CXXFLAGS += -fno-enforce-eh-specs
-CXXFLAGS += -fno-rtti
 
 LDFLAGS = $(optional_ldflags) $(CXXFLAGS)
 
 .DELETE_ON_ERROR:
 
+ifeq ($(wasi),yes)
+all: $(OBJ)/bbpPairings.wagi
+else
 all: bbpPairings.exe
+endif
 .PHONY: all
 
 dist_name = bbpPairings$(if $(version),-)$(version)
@@ -430,8 +468,21 @@ $(OBJ)/%.o: $(SRC)/%.cpp
 	mkdir -p $(dir $@)
 	$(CXX) -o $@ $(filter %.cpp,$^) -c -I$(SRC) -MMD -MP -MT $@ -MT $(@:%.o=%.d) $(CXXFLAGS)
 
+ifeq ($(wasi),yes)
+$(OBJ)/bbpPairings.wagi: $(OBJ)/bbpPairings.exe
+	$(WasmOpt) $< -O3 -o $@
+$(OBJ)/bbpPairings.exe: $(OBJECTS)
+# 	$(CXX) -o $@ $(OBJECTS) $(LDFLAGS)
+	"$(WasiSdk)/bin/wasm-ld" -m wasm32 --strip-debug \
+	-L$(WasiSdk)/share/wasi-sysroot/lib/wasm32-wasi \
+	$(WasiSdk)/share/wasi-sysroot/lib/wasm32-wasi/crt1-command.o \
+	$^ -lc++ -lc++abi \
+	-lc $(WasiSdk)/lib/clang/16/lib/wasi/libclang_rt.builtins-wasm32.a \
+	-o $@
+else
 $(OBJ)/bbpPairings.exe: $(OBJECTS)
 	$(CXX) -o $@ $(OBJECTS) $(LDFLAGS)
+endif
 
 bbpPairings.exe: $(OBJ)/bbpPairings.exe
 	cp $(OBJ)/bbpPairings.exe $@
@@ -491,6 +542,7 @@ $(dist_name).tar.gz: dist-targets
 
 TEST = test
 
+ifneq ($(wasi),yes)
 tests:
 	$(MAKE) -C $(TEST)
 .PHONY: tests
@@ -498,6 +550,7 @@ tests:
 test: bbpPairings.exe
 	$(MAKE) -C $(TEST) run
 .PHONY: test
+endif
 
 clean-tests:
 	$(MAKE) -C $(TEST) clean

@@ -192,7 +192,8 @@ namespace tournament
             std::cout << std::endl;
           }
         }
-        if (0) // catch (const swisssystems::NoValidPairingException &exception)
+#if 0
+        catch (const swisssystems::NoValidPairingException &exception)
         {
           std::cout << "No valid pairing exists for round "
             << utility::uintstringconversion
@@ -201,7 +202,7 @@ namespace tournament
             << std::endl
             << std::endl;
         }
-
+#endif
         // Add the results of the round.
         for (const player_index playerIndex : tournament.playersByRank)
         {

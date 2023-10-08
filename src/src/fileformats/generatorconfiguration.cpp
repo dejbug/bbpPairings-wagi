@@ -166,14 +166,15 @@ namespace fileformats
                   THROW(std::invalid_argument, "");
                 }
               }
-              if (0) // catch (std::invalid_argument &)
+#if 0
+              catch (std::invalid_argument &)
               {
                 THROW(FileFormatException,
                   "The value for parameter \""
                     + propertyName
                     + "\" in the configuration file is invalid.");
               }
-              if (0) // catch (std::out_of_range &)
+              catch (std::out_of_range &)
               {
                 THROW(tournament::BuildLimitExceededException,
                   "The value for parameter \""
@@ -181,6 +182,7 @@ namespace fileformats
                     + "\" in the configuration file is not supported by this "
                       "build.");
               }
+#endif
             }
             else
             {

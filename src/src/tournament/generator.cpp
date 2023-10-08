@@ -486,7 +486,8 @@ namespace tournament
               Tournament(result),
               checklistStream);
         }
-        if (0) // catch (const swisssystems::NoValidPairingException &exception)
+#if 0
+        catch (const swisssystems::NoValidPairingException &exception)
         {
           THROW(
             swisssystems::NoValidPairingException,
@@ -495,7 +496,7 @@ namespace tournament
                     result.playedRounds + 1u)
                 + " of the generated tournament.");
         }
-
+#endif
         // Generate the game results.
         for (const swisssystems::Pairing &pair : matching)
         {

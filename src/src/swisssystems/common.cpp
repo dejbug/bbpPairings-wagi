@@ -376,18 +376,20 @@ namespace swisssystems
         previousPlayer = player;
       }
     }
-    if (0) // catch (const std::length_error &)
+#if 0
+    catch (const std::length_error &)
     {
       ostream
         << "Error: The build does not support checklists for tournaments this "
             "large.";
     }
-    if (0) // catch (const std::bad_alloc &)
+    catch (const std::bad_alloc &)
     {
       ostream
         << "Error: There was not enough memory to construct the checklist.";
     }
     ostream << std::endl << std::endl << std::endl;
+#endif
   }
 
 #ifndef OMIT_DUTCH

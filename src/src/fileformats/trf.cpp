@@ -59,17 +59,19 @@ namespace fileformats
                 ::parse<tournament::player_index>(getSingleValue(string))
               - 1u;
         }
-        if (0) // catch (const std::invalid_argument &)
+#if 0
+        catch (const std::invalid_argument &)
         {
           THROW(InvalidLineException, "");
         }
-        if (0) // catch (const std::out_of_range &)
+        catch (const std::out_of_range &)
         {
           THROW(tournament::BuildLimitExceededException,
             "This build only supports player IDs up to "
               + utility::uintstringconversion::toString(tournament::maxPlayers)
               + '.');
         }
+#endif
         return playerId;
       }
 
@@ -86,11 +88,12 @@ namespace fileformats
             utility::uintstringconversion
               ::parse<tournament::points>(getSingleValue(string), 1);
         }
-        if (0) // catch (const std::invalid_argument &)
+#if 0
+        catch (const std::invalid_argument &)
         {
           THROW(InvalidLineException, "");
         }
-        if (0) // catch (const std::out_of_range &)
+        catch (const std::out_of_range &)
         {
           THROW(tournament::BuildLimitExceededException,
             "This build only supports scores up to "
@@ -98,6 +101,7 @@ namespace fileformats
                   ::toString(tournament::maxPoints, 1)
               + '.');
         }
+#endif
         return score;
       }
 
@@ -129,10 +133,11 @@ namespace fileformats
               utility::uintstringconversion
                 ::parse<tournament::rating>(getSingleValue(ratingString));
           }
-          if (0) { // catch (const std::invalid_argument &)
+#if 0
+          catch (const std::invalid_argument &) {
             THROW(InvalidLineException, "");
           }
-          if (0) // catch (const std::out_of_range &)
+          catch (const std::out_of_range &)
           {
             THROW(tournament::BuildLimitExceededException,
               "This build only supports ratings up to "
@@ -140,6 +145,7 @@ namespace fileformats
                     ::toString(~tournament::rating{ })
                 + '.');
           }
+#endif
         }
 
         const tournament::points score = readScore(line.substr(80, 4));
@@ -826,11 +832,12 @@ namespace fileformats
                         ::parse<tournament::round_index>(
                       getSingleValue(line.substr(3)));
                 }
-                if (0) // catch (const std::invalid_argument &)
+#if 0
+                catch (const std::invalid_argument &)
                 {
                   THROW(InvalidLineException, "");
                 }
-                if (0) // catch (const std::out_of_range &)
+                catch (const std::out_of_range &)
                 {
                   THROW(tournament::BuildLimitExceededException,
                     "This build only supports up to "
@@ -838,6 +845,7 @@ namespace fileformats
                           ::toString(tournament::maxRounds)
                       + " rounds");
                 }
+#endif
                 if (result.expectedRounds <= 0)
                 {
                   THROW(InvalidLineException, "");
@@ -909,11 +917,13 @@ namespace fileformats
                 usePairingAllocatedByeScore = true;
               }
             }
-            if (0) // catch (const InvalidLineException &exception)
+#if 0
+            catch (const InvalidLineException &exception)
             {
               THROW(FileFormatException,
                 "Invalid line \"" + convert.to_bytes(line) + "\"");
             }
+#endif
           }
 
           start = end + 1;

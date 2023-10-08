@@ -8,6 +8,6 @@
 		" [" << #x << "] " << (m) << '\n';\
 	std::cout.flush();\
 	std::exit(-1);\
-} while(0);
+} while(0)
 
 #endif // GLOBALS_H
