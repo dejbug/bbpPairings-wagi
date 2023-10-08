@@ -35,7 +35,7 @@ namespace tournament
     {
       if (configuration.highestRating < configuration.lowestRating)
       {
-        throw BadConfigurationException(
+        THROW(BadConfigurationException,
           "The highest rating must be higher than the lowest rating.");
       }
 
@@ -127,7 +127,7 @@ namespace tournament
               assert(
                 tournament.playedRounds > maxRounds
                   || tournament.players.size() > maxPlayers);
-              throw BuildLimitExceededException(
+              THROW(BuildLimitExceededException,
                 "This build supports at most "
                   + (tournament.playedRounds > maxRounds
                       ? utility::uintstringconversion::toString(maxRounds)
@@ -270,7 +270,7 @@ namespace tournament
         result.playersByRank.size());
       if (zeroPointByeCounts.size() < result.playersByRank.size())
       {
-        throw std::length_error("");
+        THROW(std::length_error, "");
       }
 
       /**
@@ -310,7 +310,7 @@ namespace tournament
         assert(
           initialRemainingCount > maxRounds
             || result.players.size() > maxPlayers);
-        throw BuildLimitExceededException(
+        THROW(BuildLimitExceededException,
           "This build supports at most "
             + (initialRemainingCount > maxRounds
                 ? utility::uintstringconversion::toString(maxRounds)
@@ -362,7 +362,7 @@ namespace tournament
           assert(
             initialRemainingCount >= maxRounds
               || result.players.size() > maxPlayers);
-          throw BuildLimitExceededException(
+          THROW(BuildLimitExceededException,
             "This build supports at most "
               + (initialRemainingCount >= maxRounds
                   ? utility::uintstringconversion::toString(maxRounds)
@@ -479,22 +479,21 @@ namespace tournament
         }
 
         std::list<swisssystems::Pairing> matching;
-        try
+        // try
         {
           matching =
             swisssystems::getInfo(swissSystem).computeMatching(
               Tournament(result),
               checklistStream);
         }
-        catch (const swisssystems::NoValidPairingException &exception)
+        if (0) // catch (const swisssystems::NoValidPairingException &exception)
         {
-          throw
-            swisssystems::NoValidPairingException(
+          THROW(
+            swisssystems::NoValidPairingException,
               "No valid pairing exists for round "
                 + utility::uintstringconversion::toString(
                     result.playedRounds + 1u)
-                + " of the generated tournament: "
-                + exception.what());
+                + " of the generated tournament.");
         }
 
         // Generate the game results.
@@ -598,7 +597,7 @@ namespace tournament
           player.scoreWithoutAcceleration += newPoints;
           if (player.scoreWithoutAcceleration < newPoints)
           {
-            throw BuildLimitExceededException(
+            THROW(BuildLimitExceededException,
               "This build only supports scores up to "
                 + utility::uintstringconversion
                     ::toString(tournament::maxPoints, 1)

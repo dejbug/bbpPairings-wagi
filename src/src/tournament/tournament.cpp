@@ -1,3 +1,5 @@
+#include <optional>
+
 #include <deque>
 
 #include <utility/uintstringconversion.h>

@@ -71,7 +71,7 @@ namespace utility
     {
       if (iterator == endIterator)
       {
-        throw std::invalid_argument("");
+        THROW(std::invalid_argument, "");
       }
       Result result{ };
       while (
@@ -82,12 +82,12 @@ namespace utility
         Result newValue = result * radix;
         if (newValue / radix < result)
         {
-          throw std::out_of_range("");
+          THROW(std::out_of_range, "");
         }
         result = *iterator - '0' + newValue;
         if (result < newValue)
         {
-          throw std::out_of_range("");
+          THROW(std::out_of_range, "");
         }
         ++iterator;
       }
@@ -107,7 +107,7 @@ namespace utility
       Result result = parse<Result, radix>(iterator, std::cend(string));
       if (iterator != std::cend(string))
       {
-        throw std::invalid_argument("");
+        THROW(std::invalid_argument, "");
       }
       return result;
     }
@@ -125,7 +125,7 @@ namespace utility
       Result result = parse<Result, radix>(string, stringEnd);
       if (string != stringEnd)
       {
-        throw std::invalid_argument("");
+        THROW(std::invalid_argument, "");
       }
       return result;
     }
@@ -153,26 +153,26 @@ namespace utility
                 > typesizes::bitsToRepresent<uinttypes::uint<2>, radix>(
                     std::numeric_limits<Result>::max()))
         {
-          throw std::out_of_range("");
+          THROW(std::out_of_range, "");
         }
         ++iterator;
         const T startIterator = iterator;
         Result addend = parse<Result, radix>(iterator, endIterator);
         if (iterator - startIterator > precision)
         {
-          throw std::invalid_argument("");
+          THROW(std::invalid_argument, "");
         }
         Result multiplier =
           typesizes::exponential<Result, radix>(iterator - startIterator);
         Result newValue = value * multiplier;
         if (newValue / multiplier < value)
         {
-          throw std::out_of_range("");
+          THROW(std::out_of_range, "");
         }
         value = newValue + addend;
         if (value < addend)
         {
-          throw std::out_of_range("");
+          THROW(std::out_of_range, "");
         }
         precision -= iterator - startIterator;
       }
@@ -182,13 +182,13 @@ namespace utility
               > typesizes::bitsToRepresent<uinttypes::uint<2>, radix>(
                   std::numeric_limits<Result>::max()))
       {
-        throw std::out_of_range("");
+        THROW(std::out_of_range, "");
       }
       Result multiplier = typesizes::exponential<Result, radix>(precision);
       Result result = value * multiplier;
       if (result / multiplier < value)
       {
-        throw std::out_of_range("");
+        THROW(std::out_of_range, "");
       }
       return result;
     }
@@ -208,7 +208,7 @@ namespace utility
       Result result = parse<Result, radix>(iterator, string.end(), precision);
       if (iterator != string.end())
       {
-        throw std::invalid_argument("");
+        THROW(std::invalid_argument, "");
       }
       return result;
     }

@@ -155,7 +155,7 @@ namespace swisssystems
           assert(
             tournament.playedRounds > tournament::maxRounds
               || tournament.pointsForDraw > tournament::maxPoints);
-          throw tournament::BuildLimitExceededException(
+          THROW(tournament::BuildLimitExceededException,
             "This build supports at most "
               + (tournament.playedRounds > tournament::maxRounds
                   ? utility::uintstringconversion
@@ -194,7 +194,7 @@ namespace swisssystems
                   || tournament.pointsForZeroPointBye > tournament::maxPoints
                   || tournament.pointsForPairingAllocatedBye
                       > tournament::maxPoints);
-              throw tournament::BuildLimitExceededException(
+              THROW(tournament::BuildLimitExceededException,
                 "This build supports at most "
                   + (tournament.playedRounds > tournament::maxRounds
                       ? utility::uintstringconversion
@@ -230,7 +230,7 @@ namespace swisssystems
                   || tournament.pointsForZeroPointBye > tournament::maxPoints
                   || tournament.pointsForPairingAllocatedBye
                       > tournament::maxPoints);
-              throw tournament::BuildLimitExceededException(
+              THROW(tournament::BuildLimitExceededException,
                 "This build supports at most "
                   + (tournament.playedRounds > tournament::maxRounds
                       ? utility::uintstringconversion
@@ -255,7 +255,7 @@ namespace swisssystems
                 || tournament.pointsForZeroPointBye > tournament::maxPoints
                 || tournament.pointsForPairingAllocatedBye
                     > tournament::maxPoints);
-            throw tournament::BuildLimitExceededException(
+            THROW(tournament::BuildLimitExceededException,
               "This build supports at most "
                 + (tournament.playedRounds > tournament::maxRounds
                     ? utility::uintstringconversion
@@ -296,7 +296,7 @@ namespace swisssystems
           assert(
             tournament.playedRounds > tournament::maxRounds
               || tournament.pointsForDraw > tournament::maxPoints);
-          throw tournament::BuildLimitExceededException(
+          THROW(tournament::BuildLimitExceededException,
             "This build supports at most "
               + (tournament.playedRounds > tournament::maxRounds
                   ? utility::uintstringconversion
@@ -339,7 +339,7 @@ namespace swisssystems
                   || tournament.pointsForZeroPointBye > tournament::maxPoints
                   || tournament.pointsForPairingAllocatedBye
                       > tournament::maxPoints);
-              throw tournament::BuildLimitExceededException(
+              THROW(tournament::BuildLimitExceededException,
                 "This build supports at most "
                   + (tournament.playedRounds > tournament::maxRounds
                       ? utility::uintstringconversion
@@ -362,7 +362,7 @@ namespace swisssystems
                 || tournament.pointsForZeroPointBye > tournament::maxPoints
                 || tournament.pointsForPairingAllocatedBye
                     > tournament::maxPoints);
-            throw tournament::BuildLimitExceededException(
+            THROW(tournament::BuildLimitExceededException,
               "This build supports at most "
                 + (tournament.playedRounds > tournament::maxRounds
                     ? utility::uintstringconversion
@@ -389,7 +389,7 @@ namespace swisssystems
                 || tournament.pointsForZeroPointBye > tournament::maxPoints
                 || tournament.pointsForPairingAllocatedBye
                     > tournament::maxPoints);
-            throw tournament::BuildLimitExceededException(
+            THROW(tournament::BuildLimitExceededException,
               "This build supports at most "
                 + (tournament.playedRounds > tournament::maxRounds
                     ? utility::uintstringconversion
@@ -453,7 +453,7 @@ namespace swisssystems
                 || tournament.pointsForPairingAllocatedBye
                     > tournament::maxPoints
                 || playerScore > tournament::maxPoints);
-            throw tournament::BuildLimitExceededException(
+            THROW(tournament::BuildLimitExceededException,
               playerScore > tournament::maxPoints
                 ? "This build does not support scores above "
                     + utility::uintstringconversion
@@ -735,7 +735,7 @@ namespace swisssystems
         sortedPlayers.size() - (sortedPlayers.size() & 1u)
           > tournament::maxPlayers)
       {
-        throw tournament::BuildLimitExceededException(
+        THROW(tournament::BuildLimitExceededException,
           "This build supports at most "
             + utility::uintstringconversion::toString(tournament::maxPlayers)
             + " players.");
@@ -787,7 +787,7 @@ namespace swisssystems
               *ostream,
               metricScores);
           }
-          throw NoValidPairingException(
+          THROW(NoValidPairingException,
             "No player is eligible for the pairing-allocated bye.");
         }
         result.emplace_back((*playerIterator)->id, (*playerIterator)->id);
@@ -813,7 +813,7 @@ namespace swisssystems
       matching_computer matchingComputer(vertexLabels.size(), maxEdgeWeight);
       if (vertexLabels.size() > ~matching_computer::size_type{ })
       {
-        throw std::length_error("");
+        THROW(std::length_error, "");
       }
 
       // Add the vertices to the matching computer.
@@ -942,7 +942,7 @@ namespace swisssystems
             metricScores,
             bye);
         }
-        throw NoValidPairingException(
+        THROW(NoValidPairingException,
           "The non-bye players cannot be simultaneously paired without "
           "violating the absolute criteria.");
       }

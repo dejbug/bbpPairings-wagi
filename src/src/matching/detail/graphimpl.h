@@ -32,17 +32,17 @@ namespace matching
       assert(aboveMaxEdgeWeight >> 2 == maxEdgeWeight);
       if (!(typename decltype(rootBlossomPool)::size_type{ capacity } + 1u))
       {
-        throw std::length_error("");
+        THROW(std::length_error, "");
       }
       if (
         typename decltype(parentBlossomPool)::size_type{ capacity / 2u }
           < capacity / 2u)
       {
-        throw std::length_error("");
+        THROW(std::length_error, "");
       }
       if (capacity > ~typename decltype(vertexDualVariables)::size_type{ })
       {
-        throw std::length_error("");
+        THROW(std::length_error, "");
       }
       if (
         !(typename
@@ -51,7 +51,7 @@ namespace matching
             + 1u)
       )
       {
-        throw std::length_error("");
+        THROW(std::length_error, "");
       }
       this->reserve(capacity);
     }

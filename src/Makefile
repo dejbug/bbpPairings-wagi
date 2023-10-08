@@ -3,7 +3,12 @@ SRC = src
 OBJ = build
 
 SOURCES = $(shell find $(SRC) -name "*.cpp")
+SOURCES := $(filter-out %/fileformats/generatorconfiguration.cpp,$(SOURCES))
+SOURCES := $(filter-out %/tournament/checker.cpp,$(SOURCES))
+SOURCES := $(filter-out %/tournament/generator.cpp,$(SOURCES))
 OBJECTS = $(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(SOURCES))
+
+# blah : ; @python -c "for i, n in enumerate(sorted('$(SOURCES)'.split())): print(f'{i:2}', n)"
 
 # Flags specifying which Swiss systems to include.
 burstein = yes
@@ -32,7 +37,7 @@ COMP = gcc
 
 optional_cxxflags = \
 	-std=c++20 \
-	-ftabstop=2 \
+	-ftabstop=4 \
 	-Werror \
 	-Wfatal-errors \
 	-pedantic \
@@ -392,6 +397,10 @@ ifeq ($(COMP),clang)
 endif
 
 CXXFLAGS = $(optional_cxxflags)
+CXXFLAGS += --include ../globals.h
+CXXFLAGS += -fno-exceptions
+CXXFLAGS += -fno-enforce-eh-specs
+CXXFLAGS += -fno-rtti
 
 LDFLAGS = $(optional_ldflags) $(CXXFLAGS)
 

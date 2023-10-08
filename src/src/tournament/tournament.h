@@ -321,7 +321,7 @@ namespace tournament
         + (roundIndex >= accelerations.size() ? 0u : accelerations[roundIndex]);
     if (result < score)
     {
-      throw BuildLimitExceededException(
+      THROW(BuildLimitExceededException,
         "This build does not support accelerated scores above "
           + utility::uintstringconversion::toString(maxPoints, 1)
           + '.');

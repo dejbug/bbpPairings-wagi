@@ -174,7 +174,7 @@ namespace utility
     {
       if (size > std::numeric_limits<std::ptrdiff_t>::max())
       {
-        throw std::length_error("");
+        THROW(std::length_error, "");
       }
       for (size_type index = 1; index < size; ++index)
       {

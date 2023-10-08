@@ -35,12 +35,12 @@ namespace fileformats
         utility::Tokenizer<T> tokenizer(string, T(1, ' '));
         if (tokenizer == utility::Tokenizer<T>())
         {
-          throw std::invalid_argument("");
+          THROW(std::invalid_argument, "");
         }
         const T result = *tokenizer;
         if (++tokenizer != utility::Tokenizer<T>())
         {
-          throw std::invalid_argument("");
+          THROW(std::invalid_argument, "");
         }
         return result;
       }
@@ -52,20 +52,20 @@ namespace fileformats
       tournament::player_index readPlayerId(const T &string)
       {
         tournament::player_index playerId;
-        try
+        // try
         {
           playerId =
             utility::uintstringconversion
                 ::parse<tournament::player_index>(getSingleValue(string))
               - 1u;
         }
-        catch (const std::invalid_argument &)
+        if (0) // catch (const std::invalid_argument &)
         {
-          throw InvalidLineException();
+          THROW(InvalidLineException, "");
         }
-        catch (const std::out_of_range &)
+        if (0) // catch (const std::out_of_range &)
         {
-          throw tournament::BuildLimitExceededException(
+          THROW(tournament::BuildLimitExceededException,
             "This build only supports player IDs up to "
               + utility::uintstringconversion::toString(tournament::maxPlayers)
               + '.');
@@ -80,19 +80,19 @@ namespace fileformats
       tournament::points readScore(const T &string)
       {
         tournament::points score;
-        try
+        // try
         {
           score =
             utility::uintstringconversion
               ::parse<tournament::points>(getSingleValue(string), 1);
         }
-        catch (const std::invalid_argument &)
+        if (0) // catch (const std::invalid_argument &)
         {
-          throw InvalidLineException();
+          THROW(InvalidLineException, "");
         }
-        catch (const std::out_of_range &)
+        if (0) // catch (const std::out_of_range &)
         {
-          throw tournament::BuildLimitExceededException(
+          THROW(tournament::BuildLimitExceededException,
             "This build only supports scores up to "
               + utility::uintstringconversion
                   ::toString(tournament::maxPoints, 1)
@@ -111,7 +111,7 @@ namespace fileformats
       {
         if (line.size() < 84)
         {
-          throw InvalidLineException();
+          THROW(InvalidLineException, "");
         }
 
         const tournament::player_index id =
@@ -123,18 +123,18 @@ namespace fileformats
         utility::Tokenizer<std::u32string> tokenizer(ratingString, U" ");
         if (tokenizer != utility::Tokenizer<std::u32string>())
         {
-          try
+          // try
           {
             rating =
               utility::uintstringconversion
                 ::parse<tournament::rating>(getSingleValue(ratingString));
           }
-          catch (const std::invalid_argument &) {
-            throw InvalidLineException();
+          if (0) { // catch (const std::invalid_argument &)
+            THROW(InvalidLineException, "");
           }
-          catch (const std::out_of_range &)
+          if (0) // catch (const std::out_of_range &)
           {
-            throw tournament::BuildLimitExceededException(
+            THROW(tournament::BuildLimitExceededException,
               "This build only supports ratings up to "
                 + utility::uintstringconversion
                     ::toString(~tournament::rating{ })
@@ -167,7 +167,7 @@ namespace fileformats
               opponent = readPlayerId(opponentString);
               if (opponent == id)
               {
-                throw InvalidLineException();
+                THROW(InvalidLineException, "");
               }
             }
             skip = false;
@@ -196,17 +196,17 @@ namespace fileformats
           }
           else
           {
-            throw InvalidLineException();
+            THROW(InvalidLineException, "");
           }
 
           if (opponent == id && color != tournament::COLOR_NONE)
           {
-            throw InvalidLineException();
+            THROW(InvalidLineException, "");
           }
 
           if (std::numeric_limits<char>::max() < line[startIndex + 7])
           {
-            throw InvalidLineException();
+            THROW(InvalidLineException, "");
           }
           const char resultChar =
             std::toupper<char>(line[startIndex + 7], std::locale::classic());
@@ -235,7 +235,7 @@ namespace fileformats
           }
           else
           {
-            throw InvalidLineException();
+            THROW(InvalidLineException, "");
           }
           if (
             resultChar == '+'
@@ -249,14 +249,14 @@ namespace fileformats
             gameWasPlayed = false;
             if (resultChar != '+' && resultChar != '-' && opponent != id)
             {
-              throw InvalidLineException();
+              THROW(InvalidLineException, "");
             }
           }
           else if (
             color == tournament::COLOR_NONE
               && (resultChar != '=' || opponent != id))
           {
-            throw InvalidLineException();
+            THROW(InvalidLineException, "");
           }
           if (resultChar != ' ')
           {
@@ -280,7 +280,7 @@ namespace fileformats
               skippedRounds
                 >= std::numeric_limits<tournament::round_index>::max())
             {
-              throw tournament::BuildLimitExceededException(
+              THROW(tournament::BuildLimitExceededException,
                 "This build supports at most "
                   + utility::uintstringconversion::toString(
                       tournament::maxRounds)
@@ -305,7 +305,7 @@ namespace fileformats
             }
             if (matches.size() - 1u > tournament.playedRounds)
             {
-              throw tournament::BuildLimitExceededException(
+              THROW(tournament::BuildLimitExceededException,
                 "This build supports at most "
                   + utility::uintstringconversion::toString(
                       tournament::maxRounds)
@@ -315,7 +315,7 @@ namespace fileformats
         }
         if (line.find_first_not_of(U" ", startIndex) < line.npos)
         {
-          throw InvalidLineException();
+          THROW(InvalidLineException, "");
         }
         tournament::Player player(id, score, rating, std::move(matches));
         if (id >= tournament.players.size())
@@ -328,7 +328,7 @@ namespace fileformats
         }
         else if (tournament.players[id].isValid)
         {
-          throw FileFormatException("A pairing number is repeated.");
+          THROW(FileFormatException, "A pairing number is repeated.");
         }
         else
         {
@@ -384,7 +384,7 @@ namespace fileformats
         }
         if (line.find_first_not_of(U" ", startIndex) < line.npos)
         {
-          throw InvalidLineException();
+          THROW(InvalidLineException, "");
         }
       }
 
@@ -413,7 +413,7 @@ namespace fileformats
       {
         if (line.length() < 8)
         {
-          throw InvalidLineException();
+          THROW(InvalidLineException, "");
         }
         return readScore(line.substr(4, 8));
       }
@@ -569,7 +569,7 @@ namespace fileformats
                     || opponent.matches[matchIndex].color == match.color
                     || opponent.matches[matchIndex].opponent != player.id)
                 {
-                  throw FileFormatException(
+                  THROW(FileFormatException,
                     "Match "
                       + utility::uintstringconversion::toString(matchIndex + 1u)
                       + " for player "
@@ -597,7 +597,7 @@ namespace fileformats
           {
             if (player.accelerations.size() > tournament.expectedRounds)
             {
-              throw FileFormatException(
+              THROW(FileFormatException,
                 "Player "
                   + utility::uintstringconversion::toString(player.id + 1u)
                   + " has more acceleration entries than the total number of "
@@ -614,7 +614,7 @@ namespace fileformats
               points += tournament.getPoints(player, match);
               if (points < tournament.getPoints(player, match))
               {
-                throw tournament::BuildLimitExceededException(
+                THROW(tournament::BuildLimitExceededException,
                   "This build only supports scores up to "
                     + utility::uintstringconversion
                         ::toString(tournament::maxPoints, 1)
@@ -663,7 +663,7 @@ namespace fileformats
             }
             if (player.scoreWithoutAcceleration != points)
             {
-              throw FileFormatException(
+              THROW(FileFormatException,
                 "The score for player "
                   + utility::uintstringconversion::toString(player.id + 1u)
                   + " does not match the game results.");
@@ -682,7 +682,7 @@ namespace fileformats
       {
         if (player.scoreWithoutAcceleration > 999u)
         {
-          throw LimitExceededException(
+          THROW(LimitExceededException,
             "The output file format does not support scores above 99.9.");
         }
         std::ostringstream outputStream;
@@ -794,7 +794,7 @@ namespace fileformats
             convert.from_bytes(&buffer[start], &buffer[end]);
           if (convert.converted() < end - start)
           {
-            throw FileFormatException("The file is not legal UTF-8.");
+            THROW(FileFormatException, "The file is not legal UTF-8.");
           }
           if (line.size() >= 3)
           {
@@ -803,7 +803,7 @@ namespace fileformats
               data->lines.push_back(line);
             }
             const std::u32string prefix = line.substr(0, 3);
-            try
+            // try
             {
               if (prefix == U"001")
               {
@@ -819,20 +819,20 @@ namespace fileformats
               }
               else if (prefix == U"XXR")
               {
-                try
+                // try
                 {
                   result.expectedRounds =
                     utility::uintstringconversion
                         ::parse<tournament::round_index>(
                       getSingleValue(line.substr(3)));
                 }
-                catch (const std::invalid_argument &)
+                if (0) // catch (const std::invalid_argument &)
                 {
-                  throw InvalidLineException();
+                  THROW(InvalidLineException, "");
                 }
-                catch (const std::out_of_range &)
+                if (0) // catch (const std::out_of_range &)
                 {
-                  throw tournament::BuildLimitExceededException(
+                  THROW(tournament::BuildLimitExceededException,
                     "This build only supports up to "
                       + utility::uintstringconversion
                           ::toString(tournament::maxRounds)
@@ -840,7 +840,7 @@ namespace fileformats
                 }
                 if (result.expectedRounds <= 0)
                 {
-                  throw InvalidLineException();
+                  THROW(InvalidLineException, "");
                 }
               }
               else if (prefix == U"XXC")
@@ -909,9 +909,9 @@ namespace fileformats
                 usePairingAllocatedByeScore = true;
               }
             }
-            catch (const InvalidLineException &exception)
+            if (0) // catch (const InvalidLineException &exception)
             {
-              throw FileFormatException(
+              THROW(FileFormatException,
                 "Invalid line \"" + convert.to_bytes(line) + "\"");
             }
           }
@@ -921,11 +921,11 @@ namespace fileformats
       }
       if (!stream.eof())
       {
-        throw FileReaderException("The file could not be loaded.");
+        THROW(FileReaderException, "The file could not be loaded.");
       }
       if (!useRank && result.playersByRank.size() != result.players.size())
       {
-        throw FileFormatException("A pairing number is missing.");
+        THROW(FileFormatException, "A pairing number is missing.");
       }
 
       evenUpMatchHistories(result, includesUnpairedRound);
@@ -934,12 +934,12 @@ namespace fileformats
           && result.playedRounds > result.expectedRounds - includesUnpairedRound
       )
       {
-        throw FileFormatException(
+        THROW(FileFormatException,
           "The number of rounds is larger than the reported number of rounds.");
       }
       else if (includesUnpairedRound && !result.expectedRounds)
       {
-        throw FileFormatException(
+        THROW(FileFormatException,
           "The total number of rounds in the tournament must be specified.");
       }
       else if (!result.expectedRounds)
@@ -979,12 +979,12 @@ namespace fileformats
       {
         if (player.id > 9999u)
         {
-          throw LimitExceededException(
+          THROW(LimitExceededException,
             "The output file format only supports player IDs up to 9999.");
         }
         else if (player.rating > 9999u)
         {
-          throw LimitExceededException(
+          THROW(LimitExceededException,
             "The output file format only supports ratings up to 9999.");
         }
         outputStream << "001 "
@@ -1025,7 +1025,7 @@ namespace fileformats
             || tournament.pointsForForfeitLoss > 999u
             || tournament.pointsForPairingAllocatedBye > 999u)
         {
-          throw LimitExceededException(
+          THROW(LimitExceededException,
             "The output file format does not support scores above 99.9.");
         }
         if (
@@ -1094,7 +1094,7 @@ namespace fileformats
             {
               if (playerAcceleration > 999u)
               {
-                throw LimitExceededException(
+                THROW(LimitExceededException,
                   "The output file format does not support scores above 99.9.");
               }
               outputStream << std::setw(5)

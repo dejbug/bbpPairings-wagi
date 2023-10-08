@@ -53,7 +53,7 @@ namespace swisssystems
     {
       if (tournament.playedRounds >= std::string::npos)
       {
-        throw std::length_error("");
+        THROW(std::length_error, "");
       }
       std::deque<std::string> result{
         "ID",
@@ -138,7 +138,7 @@ namespace swisssystems
         assert(widthsIterator != widths.end());
         if (string.length() > std::numeric_limits<int>::max())
         {
-          throw std::length_error("");
+          THROW(std::length_error, "");
         }
         *widthsIterator =
           std::max<unsigned int>(*widthsIterator, string.length());
@@ -330,7 +330,7 @@ namespace swisssystems
     const tournament::Tournament &tournament,
     const std::list<const tournament::Player *> &orderedPlayers)
   {
-    try
+    // try
     {
       // Compute the column widths.
       std::deque<unsigned int> columnWidths;
@@ -340,7 +340,7 @@ namespace swisssystems
       {
         if (string.length() > std::numeric_limits<int>::max())
         {
-          throw std::length_error("");
+          THROW(std::length_error,"");
         }
         columnWidths.push_back(string.length());
       }
@@ -376,13 +376,13 @@ namespace swisssystems
         previousPlayer = player;
       }
     }
-    catch (const std::length_error &)
+    if (0) // catch (const std::length_error &)
     {
       ostream
         << "Error: The build does not support checklists for tournaments this "
             "large.";
     }
-    catch (const std::bad_alloc &)
+    if (0) // catch (const std::bad_alloc &)
     {
       ostream
         << "Error: There was not enough memory to construct the checklist.";
@@ -413,7 +413,7 @@ namespace swisssystems
       return bursteinInfo;
 #endif
     default:
-      throw std::logic_error("");
+      THROW(std::logic_error, "");
     }
   }
 }

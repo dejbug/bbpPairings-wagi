@@ -46,7 +46,7 @@ namespace fileformats
             bool usePairingAllocatedByeValue{ };
             if (stringStream)
             {
-              try
+              // try
               {
                 if (propertyName == "PlayersNumber")
                 {
@@ -70,7 +70,7 @@ namespace fileformats
                     >(propertyValue);
                   if (configuration.drawPercentage > 100)
                   {
-                    throw std::invalid_argument("");
+                    THROW(std::invalid_argument, "");
                   }
                 }
                 else if (propertyName == "ForfeitRate")
@@ -78,7 +78,7 @@ namespace fileformats
                   configuration.forfeitRate = std::stof(propertyValue);
                   if (configuration.forfeitRate < 1)
                   {
-                    throw std::invalid_argument("");
+                    THROW(std::invalid_argument, "");
                   }
                 }
                 else if (propertyName == "RetiredRate")
@@ -86,7 +86,7 @@ namespace fileformats
                   configuration.retiredRate = std::stof(propertyValue);
                   if (configuration.retiredRate < 2)
                   {
-                    throw std::invalid_argument("");
+                    THROW(std::invalid_argument, "");
                   }
                 }
                 else if (
@@ -96,7 +96,7 @@ namespace fileformats
                   configuration.halfPointByeRate = std::stof(propertyValue);
                   if (configuration.halfPointByeRate < 1)
                   {
-                    throw std::invalid_argument("");
+                    THROW(std::invalid_argument, "");
                   }
                 }
                 else if (propertyName == "HighestRating")
@@ -155,7 +155,7 @@ namespace fileformats
                 }
                 else
                 {
-                  throw FileFormatException(
+                  THROW(FileFormatException,
                     "Unexpected parameter \""
                       + propertyName
                       + "\" in configuration file.");
@@ -163,19 +163,19 @@ namespace fileformats
 
                 if (!stringStream)
                 {
-                  throw std::invalid_argument("");
+                  THROW(std::invalid_argument, "");
                 }
               }
-              catch (std::invalid_argument &)
+              if (0) // catch (std::invalid_argument &)
               {
-                throw FileFormatException(
+                THROW(FileFormatException,
                   "The value for parameter \""
                     + propertyName
                     + "\" in the configuration file is invalid.");
               }
-              catch (std::out_of_range &)
+              if (0) // catch (std::out_of_range &)
               {
-                throw tournament::BuildLimitExceededException(
+                THROW(tournament::BuildLimitExceededException,
                   "The value for parameter \""
                     + propertyName
                     + "\" in the configuration file is not supported by this "
@@ -184,7 +184,7 @@ namespace fileformats
             }
             else
             {
-              throw FileFormatException(
+              THROW(FileFormatException,
                 "Error parsing configuration file line: " + buffer);
             }
           }
@@ -192,7 +192,7 @@ namespace fileformats
       }
       if (!inputStream.eof())
       {
-        throw FileReaderException("Error loading configuration file.");
+        THROW(FileReaderException, "Error loading configuration file.");
       }
     }
   }

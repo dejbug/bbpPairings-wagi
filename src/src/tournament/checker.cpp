@@ -78,7 +78,7 @@ namespace tournament
 
         std::list<swisssystems::Pairing> correctMatching;
 
-        try
+        // try
         {
           correctMatching =
             info.computeMatching(
@@ -192,7 +192,7 @@ namespace tournament
             std::cout << std::endl;
           }
         }
-        catch (const swisssystems::NoValidPairingException &exception)
+        if (0) // catch (const swisssystems::NoValidPairingException &exception)
         {
           std::cout << "No valid pairing exists for round "
             << utility::uintstringconversion

@@ -861,7 +861,7 @@ namespace swisssystems
         1u);
       if (sortedPlayers.size() > ~validity_matching_computer::size_type{ })
       {
-        throw std::length_error("");
+        THROW(std::length_error, "");
       }
       for (
         tournament::player_index playerIndex{ };
@@ -910,7 +910,7 @@ namespace swisssystems
         {
           printChecklist(tournament, sortedPlayers, *ostream);
         }
-        throw NoValidPairingException(
+        THROW(NoValidPairingException,
           "The players could not be simultaneously matched while satisfying "
           "all absolute criteria.");
       }
@@ -1006,7 +1006,7 @@ namespace swisssystems
           maxEdgeWeight);
         if (playersByIndex.size() > ~optimality_matching_computer::size_type{ })
         {
-          throw std::length_error("");
+          THROW(std::length_error, "");
         }
         for (
           tournament::player_index playerIndex = 0;

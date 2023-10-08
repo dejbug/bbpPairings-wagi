@@ -58,7 +58,7 @@ namespace matching
     {
       if (minOuterEdges.empty())
       {
-        throw std::length_error("");
+        THROW(std::length_error, "");
       }
     }
     /**
